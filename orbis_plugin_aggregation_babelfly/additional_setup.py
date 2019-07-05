@@ -2,8 +2,6 @@ import os
 
 
 def run():
-    print("working")
-
     try:
         key = os.environ['BABELNET_API_KEY']
     except KeyError:
