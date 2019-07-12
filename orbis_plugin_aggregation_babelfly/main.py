@@ -10,13 +10,13 @@ from orbis_eval.core.aggregation import AggregationBaseClass
 
 class Main(AggregationBaseClass):
 
-    def query(self, text, item):
+    def query(self, item):
         service_url = 'https://babelfy.io/v1/disambiguate'
         key = os.environ['BABELNET_API_KEY']
         annotation_type = 'NAMED_ENTITIES'
 
         data = {
-            'text': text,
+            'text': item['corpus'],
             'annType': annotation_type,
             'key': key
         }
