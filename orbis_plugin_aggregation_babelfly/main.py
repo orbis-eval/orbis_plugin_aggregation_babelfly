@@ -8,11 +8,23 @@ from orbis_plugin_aggregation_dbpedia_entity_types import Main as dbpedia_entity
 from orbis_eval.core.base import AggregationBaseClass
 
 
+import logging
+logger = logging.getLogger("Babelfly")
+
+
 class Main(AggregationBaseClass):
 
+    def environment(self):
+        keys = {
+            'BABELNET_API_KEY': "",
+            'SERVICE_URL': ""
+        }
+        return keys
+
     def query(self, item):
-        service_url = 'https://babelfy.io/v1/disambiguate'
-        key = os.environ['BABELNET_API_KEY']
+        # service_url = 'https://babelfy.io/v1/disambiguate'
+        service_url = self.environment_variables['SERVICE_URL'] or 'https://babelfy.io/v1/disambiguate'
+        key = self.environment_variables['BABELNET_API_KEY']
         annotation_type = 'NAMED_ENTITIES'
 
         data = {
@@ -23,17 +35,21 @@ class Main(AggregationBaseClass):
 
         try:
             response = requests.post(service_url, data=data).json()
+            logger.debug(f"Babelfly response: {response}")
         except Exception as exception:
-            app.logger.error(f"Query failed: {exception}")
+            logger.error(f"Query failed: {exception}")
             response = None
         return response
 
     def map_entities(self, response, item):
+
         if not response:
             return None
+
         corpus = item['corpus']
         file_entities = []
         for item in response:
+            # logger.warning(f"47: {item}")
             item["key"] = item["DBpediaURL"]
             item["entity_type"] = dbpedia_entity_types.get_dbpedia_type(item["key"])
             item["entity_type"] = dbpedia_entity_types.normalize_entity_type(item["entity_type"])
@@ -42,3 +58,6 @@ class Main(AggregationBaseClass):
             item["surfaceForm"] = corpus[item["document_start"]:item["document_end"]]
             file_entities.append(item)
         return file_entities
+
+if __name__ == '__main__':
+    key = os.environ['BABELNET_API_KEY']
