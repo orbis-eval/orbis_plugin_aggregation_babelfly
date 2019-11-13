@@ -16,15 +16,15 @@ class Main(AggregationBaseClass):
 
     def environment(self):
         keys = {
-            'BABELNET_API_KEY': "",
-            'SERVICE_URL': ""
+            'BABELFLY_API_KEY': "",
+            'BABELFLY_SERVICE_URL': ""
         }
         return keys
 
     def query(self, item):
         # service_url = 'https://babelfy.io/v1/disambiguate'
-        service_url = self.environment_variables['SERVICE_URL'] or 'https://babelfy.io/v1/disambiguate'
-        key = self.environment_variables['BABELNET_API_KEY']
+        service_url = self.environment_variables['BABELFLY_SERVICE_URL'] or 'https://babelfy.io/v1/disambiguate'
+        key = self.environment_variables['BABELFLY_API_KEY']
         annotation_type = 'NAMED_ENTITIES'
 
         data = {
@@ -60,4 +60,4 @@ class Main(AggregationBaseClass):
         return file_entities
 
 if __name__ == '__main__':
-    key = os.environ['BABELNET_API_KEY']
+    key = os.environ['BABELFLY_API_KEY']
